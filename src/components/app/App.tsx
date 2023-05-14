@@ -39,11 +39,11 @@ export const App: FC = () => {
         <DrawingManagerF
           options={{
             drawingControlOptions: {
-              // drawingModes: [
-              //   'circle',
-              //   'polygon',
-              //   'rectangle',
-              // ] as OverlayType[],
+              drawingModes: [
+                'circle',
+                'polygon',
+                'rectangle',
+              ] as OverlayType[],
             },
           }}
           onCircleComplete={onCircleComplete}
