@@ -7,25 +7,40 @@ import {
   GoogleMapRectangle,
   OverlayType,
 } from 'components/unsorted/Map/types';
+import { pointInPolyRaycast } from 'point-in-polygon-extended';
 import { FC } from 'react';
 
 function getPaths(polygon: GoogleMapPolygon) {
   const polygonBounds = polygon.getPath();
-  // const bounds = [];
-  // for (let i = 0; i < (polygonBounds as unknown as any)?.length; i++) {
-  //   const point = {
-  //     lat: polygonBounds.getAt(i).lat(),
-  //     lng: polygonBounds.getAt(i).lng(),
-  //   };
-  //   bounds.push(point);
-  // }
-  // console.log(bounds);
+  const bounds = [];
+  for (let i = 0; i < (polygonBounds as unknown as any)?.length; i++) {
+    const point = {
+      lat: polygonBounds.getAt(i).lat(),
+      lng: polygonBounds.getAt(i).lng(),
+    };
+    bounds.push(point);
+  }
+  console.log(bounds);
 }
+
+const polygon = [
+  [50.961459747951125, -105.740709375],
+  [39.235982971373964, -110.22313125],
+  [44.84370500731902, -104.7739125],
+  [41.380421814574206, -96.951646875],
+  [48.519793962293306, -99.588365625],
+  [45.64813456357929, -103.807115625],
+];
 
 export const App: FC = () => {
   const onPolygonComplete = (polygon: GoogleMapPolygon) => {
     getPaths(polygon);
   };
+
+  console.dir([
+    pointInPolyRaycast([45.77088192355619, -100.643053125], polygon),
+    pointInPolyRaycast([49.84108803054139, -91.502428125], polygon),
+  ]);
 
   const onCircleComplete = (circle: GoogleMapCircle) => {
     console.log(circle.getBounds()?.toJSON());
@@ -39,11 +54,11 @@ export const App: FC = () => {
         <DrawingManagerF
           options={{
             drawingControlOptions: {
-              drawingModes: [
-                'circle',
-                'polygon',
-                'rectangle',
-              ] as OverlayType[],
+              // drawingModes: [
+              //   'circle',
+              //   'polygon',
+              //   'rectangle',
+              // ] as OverlayType[],
             },
           }}
           onCircleComplete={onCircleComplete}
