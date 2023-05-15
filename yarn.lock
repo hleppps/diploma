@@ -1334,6 +1334,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.40.0.tgz#3ba73359e11f5a7bd3e407f70b3528abfae69cec"
   integrity sha512-ElyB54bJIhXQYVKjDSvCkPO1iU1tSAeVQJbllWJq1XQSmmA4dgFk8CbiBGpiOPxleE48vDogxCtmMYku4HSVLA==
 
+"@faker-js/faker@8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-8.0.0.tgz#2749d224c612321b17d8cb59f58d91196cea3da7"
+  integrity sha512-XDR8sApuf78GHx8mLXl3KL/q7eB52A963UGejVbdbj3OZtfGlNwp0J78b7apVzqRi0GF8l9g3eSkkaL2UmU9Aw==
+
 "@googlemaps/js-api-loader@1.15.1":
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.15.1.tgz#7d5f1d55a4ec5c99b1d8f0708f3a46b83a71384c"
