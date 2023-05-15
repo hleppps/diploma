@@ -5,9 +5,8 @@ import {
 } from '@react-google-maps/api';
 import { FC, memo, useRef } from 'react';
 import { Address } from 'types/global';
+import { GoogleMapType } from 'types/map';
 import { GOOGLE_MAP_API_KEY } from 'utils/constants';
-
-import { Bounds, GoogleMapDrawingManager, GoogleMapType } from './types';
 
 const containerStyle = {
   width: '100%',
