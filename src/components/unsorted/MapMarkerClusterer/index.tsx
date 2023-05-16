@@ -25,7 +25,7 @@ export const MapMarkerClusterer: FC<MapMarkerClustererProps> = ({
   }
 
   return (
-    <MarkerClusterer zoomOnClick {...rest}>
+    <MarkerClustererF zoomOnClick {...rest}>
       {(clusterer) => (
         <>
           {Children.map(children, (child) => ({
@@ -34,6 +34,6 @@ export const MapMarkerClusterer: FC<MapMarkerClustererProps> = ({
           }))}
         </>
       )}
-    </MarkerClusterer>
+    </MarkerClustererF>
   );
 };

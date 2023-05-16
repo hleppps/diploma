@@ -36,9 +36,9 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
   };
 
   const flatMarkers = useMemo(() => {
-    return flats.map(({ address, _id }) => (
+    return flats.map(({ address, id }) => (
       <MapHouseMarker
-        key={_id}
+        key={id}
         position={{
           lat: address.coordinates.lat,
           lng: address.coordinates.lng,
@@ -46,6 +46,8 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
       />
     ));
   }, [flats]);
+
+  console.log(flats);
 
   return (
     <Map zoom={14} {...rest}>

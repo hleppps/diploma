@@ -1,7 +1,7 @@
 export type Address = { lat: number; lng: number };
 
 export type Flat = {
-  _id: string;
+  id: string;
   previewImage: string;
   address: {
     coordinates: {
@@ -11,4 +11,6 @@ export type Flat = {
     street: string;
     streetAddress: string;
   };
+  rooms: number;
+  rentPrice: number;
 };
