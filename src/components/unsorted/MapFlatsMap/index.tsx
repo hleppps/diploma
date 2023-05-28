@@ -1,4 +1,4 @@
-import { DrawingManagerF } from '@react-google-maps/api';
+import { DrawingManagerF, MarkerF, PolylineF } from '@react-google-maps/api';
 import { Map, MapProps } from 'components/unsorted/Map';
 import { FC, useMemo } from 'react';
 import { Flat } from 'types/global';
@@ -47,10 +47,8 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
     ));
   }, [flats]);
 
-  console.log(flats);
-
   return (
-    <Map zoom={14} {...rest}>
+    <Map zoom={12} center={{ lat: 50.47, lng: 30.47 }} {...rest}>
       <DrawingManagerF
         options={{
           polygonOptions: figureOptions,
@@ -58,7 +56,7 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
           rectangleOptions: figureOptions,
           drawingControlOptions: {
             drawingModes: [
-              'circle',
+              // 'circle',
               'polygon',
               'rectangle',
             ] as GoogleMapOverlayType[],
@@ -68,7 +66,69 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
         onRectangleComplete={onRectangleComplete}
         onPolygonComplete={onPolygonComplete}
       />
+
+      {/* <PolylineF
+        options={{ strokeColor: 'red' }}
+        path={[
+          { lat: 50.36, lng: 30.33 },
+          { lat: 50.37, lng: 30.33 },
+          { lat: 50.37, lng: 30.34 },
+          { lat: 50.36, lng: 30.34 },
+        ]}
+      /> */}
+
+      {/* <PolylineF
+        options={{ strokeColor: 'red' }}
+        path={[
+          { lat: 0, lng: 0 },
+          { lat: 0, lng: 0.01 },
+          { lat: 0.01, lng: 0.01 },
+          { lat: 0.01, lng: 0 },
+          { lat: 0, lng: 0 },
+        ]}
+      />
+      <PolylineF
+        options={{ strokeColor: '#FEFEFE' }}
+        path={[
+          { lat: 0, lng: 0 },
+          { lat: 0, lng: 0.1 },
+          { lat: 0.1, lng: 0.1 },
+          { lat: 0.1, lng: 0 },
+          { lat: 0, lng: 0 },
+        ]}
+      />
+      <PolylineF
+        options={{ strokeColor: 'blue' }}
+        path={[
+          { lat: 0, lng: 0 },
+          { lat: 0, lng: 1 },
+          { lat: 1, lng: 1 },
+          { lat: 1, lng: 0 },
+          { lat: 0, lng: 0 },
+        ]}
+      />
+      <PolylineF
+        options={{ strokeColor: 'violet' }}
+        path={[
+          { lat: 0, lng: 0 },
+          { lat: 0, lng: 10 },
+          { lat: 10, lng: 10 },
+          { lat: 10, lng: 0 },
+          { lat: 0, lng: 0 },
+        ]}
+      />
+      <MarkerF position={{ lat: 50.4, lng: 30.46 }} />
+      <MarkerF position={{ lat: 50.41, lng: 30.46 }} />
+
+      <MarkerF position={{ lat: 50.4, lng: 30.5 }} />
+      <MarkerF position={{ lat: 50.5, lng: 30.5 }} />
+
+      <MarkerF position={{ lat: 50.4, lng: 30.54 }} />
+      <MarkerF position={{ lat: 51.4, lng: 30.54 }} /> */}
+
+      {/* <MarkerF position={{ lat: 50.41, lng: 30.46 }} /> */}
       <MapMarkerClusterer>{flatMarkers}</MapMarkerClusterer>
+      {/* {flatMarkers} */}
     </Map>
   );
 };

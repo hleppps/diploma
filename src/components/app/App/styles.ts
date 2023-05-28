@@ -6,4 +6,9 @@ export const styles: SxStyles = {
     alignItems: 'flex-start',
     gap: '10px',
   },
+
+  mapSection: {
+    height: '100vh',
+    width: '60%',
+  },
 };
