@@ -15,18 +15,21 @@ import { styles } from './styles';
 
 export const App: FC = () => {
   const [dbFlats, setDbFlats] = useState<PreparedFlatsData | undefined>();
-  const [tempGeneratedFlats, setTempGeneratedFlats] = useState<Flat[] | undefined>([]);
+  const [tempGeneratedFlats, setTempGeneratedFlats] = useState<
+    Flat[] | undefined
+  >([]);
   const [flats, setFlats] = useState<Flat[]>([]);
   const [figurePath, setFigurePath] = useState<Address[]>([]);
 
   const handleGetDbData = () => {
-    // localforage.getItem(Stores.Flats).then((dfFlats) => {
-    //   setDbFlats(dfFlats as PreparedFlatsData);
-    // });
+    localforage.getItem(Stores.Flats).then((dfFlats) => {
+      setTempGeneratedFlats(dfFlats as Flat[]);
+      // setDbFlats(dfFlats as PreparedFlatsData);
+    });
 
     // Dummy:
-    const preparedFlats = prepareFlatsData(dummyFlats);
-    setDbFlats(preparedFlats);
+    // const preparedFlats = prepareFlatsData(dummyFlats);
+    // setDbFlats(preparedFlats);
   };
 
   const handleResetData = () => {
@@ -50,7 +53,7 @@ export const App: FC = () => {
     localforage.setItem(Stores.Flats, preparedFlats).then((dbFlats) => {
       if (dbFlats) {
         // setDbFlats(dbFlats as PreparedFlatsData);
-        setTempGeneratedFlats(dbFlats as Flat[])
+        setTempGeneratedFlats(dbFlats as Flat[]);
         alert('Дані згенеровано!');
       }
       handleGetDbData();
@@ -59,8 +62,6 @@ export const App: FC = () => {
 
   useEffect(() => {
     handleGetDbData();
-    const preparedFlats = prepareFlatsData(dummyFlats);
-    // console.log(preparedFlats);
   }, []);
 
   const handlePolygonComplete = (polygon: GoogleMapPolygon) => {
