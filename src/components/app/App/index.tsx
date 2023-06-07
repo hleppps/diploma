@@ -1,38 +1,41 @@
-import { Box, Button, ButtonGroup, List, ListItem } from '@mui/material';
+import { Box, Button, ButtonGroup } from '@mui/material';
 import { FlatsList } from 'components/unsorted/FlatsList';
 import { MapFlatsMap } from 'components/unsorted/MapFlatsMap';
 import localforage from 'localforage';
-import { pointInPolyRaycast } from 'point-in-polygon-extended';
-import { FC, useEffect, useState } from 'react';
-import { Address, Flat, PreparedFlatsData } from 'types/global';
-import { GoogleMapPolygon, GoogleMapRectangle } from 'types/map';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { Address, Flat } from 'types/global';
+import { GoogleMapPolygon, GoogleMapRectangle, GoogleMapType } from 'types/map';
 import { Stores } from 'utils/constants';
 import { dummyFlats } from 'utils/dummyFlats';
+import { findPathTiles } from 'utils/findPathTiles';
 import { generateFlats } from 'utils/generateFlats';
 import { getPolygonBounds, getRectangleBounds } from 'utils/getBounds';
+import { coordinatesToTile } from 'utils/getTile';
+import { Tiles } from 'utils/tiles';
 
 import { styles } from './styles';
 
 export const App: FC = () => {
-  const [dbFlats, setDbFlats] = useState<PreparedFlatsData | undefined>();
+  const [dbFlats, setDbFlats] = useState<Flat[]>([]);
+  // const [flats, setFlats] = useState<Flat[]>([]);
+  const [figurePaths, setFigurePaths] = useState<Address[][]>([]);
+  const mapRef = useRef<GoogleMapType>();
 
-  const [flats, setFlats] = useState<Flat[]>([]);
-  const [figurePath, setFigurePath] = useState<Address[]>([]);
+  const tiles = useMemo(() => new Tiles(dbFlats), []);
 
-  // const handleGetDbData = () => {
-  //   localforage.getItem(Stores.Flats).then((dfFlats) => {
-  //     setTempGeneratedFlats(dfFlats as Flat[]);
-  //     // setDbFlats(dfFlats as PreparedFlatsData);
-  //   });
+  const handlePolygonComplete = (polygon: GoogleMapPolygon) => {
+    const polygonPath = getPolygonBounds(polygon);
+    setFigurePaths((prevPaths) => [...prevPaths, polygonPath]);
+  };
 
-  // Dummy:
-  // const preparedFlats = prepareFlatsData(dummyFlats);
-  // setDbFlats(preparedFlats);
-  // };
+  const handleRectangleComplete = (rectangle: GoogleMapRectangle) => {
+    const rectanglePath = getRectangleBounds(rectangle);
+    setFigurePaths((prevPaths) => [...prevPaths, rectanglePath]);
+  };
 
   const handleGenerateData = () => {
     // Dummy data
-    const useDummyData = false;
+    const useDummyData = true;
 
     const generatedFlats = useDummyData
       ? dummyFlats
@@ -47,11 +50,9 @@ export const App: FC = () => {
           rentPrice: { min: 3000, max: 50000 },
         });
 
-    setFlats(generatedFlats);
-
     localforage.setItem(Stores.Flats, generatedFlats).then((dbFlats) => {
       if (dbFlats) {
-        setDbFlats(dbFlats as PreparedFlatsData);
+        setDbFlats(dbFlats as Flat[]);
         // alert('Дані згенеровано!');
       }
       handleGetDbData();
@@ -60,14 +61,13 @@ export const App: FC = () => {
 
   const handleGetDbData = () => {
     localforage.getItem(Stores.Flats).then((dfFlats) => {
-      setDbFlats(dfFlats as PreparedFlatsData);
+      setDbFlats(dfFlats as Flat[]);
     });
   };
 
   const handleResetData = () => {
     localforage.removeItem(Stores.Flats).then(() => {
-      setDbFlats(undefined);
-      setFlats([]);
+      setDbFlats([]);
       // alert('Дані очищено!');
     });
   };
@@ -76,37 +76,41 @@ export const App: FC = () => {
     handleGetDbData();
   }, []);
 
-  const handlePolygonComplete = (polygon: GoogleMapPolygon) => {
-    const polygonPath = getPolygonBounds(polygon);
-    setFigurePath(polygonPath);
-  };
+  useEffect(() => {
+    // console.log(dbFlats);
+    // const flat = dbFlats[0];
+    // const { lat, lng } = flat?.address?.coordinates || {};
+    // if (lat && lng) {
+    //   coordinatesToTile(lat, lng, 11);
+    // }
+  }, [dbFlats]);
 
-  const handleRectangleComplete = (rectangle: GoogleMapRectangle) => {
-    const rectanglePath = getRectangleBounds(rectangle);
-    setFigurePath(rectanglePath);
-  };
-
-  // useEffect(() => {
-  //   const foundFlats: Flat[] = [];
-  //   const polygon = figurePath.map((point) => [point.lat, point.lng]);
-  //   tempGeneratedFlats?.forEach((flat) => {
-  //     const coordinates = flat.address.coordinates;
-  //     const point = [coordinates.lat, coordinates.lng];
-  //     const pointInPolygon = pointInPolyRaycast(point, polygon);
-
-  //     if (pointInPolygon) {
-  //       foundFlats.push(flat);
-  //     }
-  //   });
-
-  //   setFlats(foundFlats);
-  // }, [figurePath]);
+  useEffect(() => {
+    findPathTiles(figurePaths[figurePaths.length - 1]);
+    // console.log(tiles.get());
+    // console.log(figurePaths);
+    // figurePaths.forEach((path) => {
+    //   getPathGridCells(path);
+    // });
+    // const foundFlats: Flat[] = [];
+    // const polygon = figurePath.map((point) => [point.lat, point.lng]);
+    // tempGeneratedFlats?.forEach((flat) => {
+    //   const coordinates = flat.address.coordinates;
+    //   const point = [coordinates.lat, coordinates.lng];
+    //   const pointInPolygon = pointInPolyRaycast(point, polygon);
+    //   if (pointInPolygon) {
+    //     foundFlats.push(flat);
+    //   }
+    // });
+    // setFlats(foundFlats);
+  }, [figurePaths]);
 
   return (
     <Box sx={styles.container}>
       <Box sx={styles.mapSection}>
         <MapFlatsMap
-          flats={flats}
+          mapRef={mapRef}
+          flats={[]}
           onPolygonComplete={handlePolygonComplete}
           onRectangleComplete={handleRectangleComplete}
         />
@@ -125,7 +129,7 @@ export const App: FC = () => {
           </Button>
         </ButtonGroup>
 
-        <FlatsList flats={flats} />
+        <FlatsList flats={dbFlats} />
       </Box>
     </Box>
   );

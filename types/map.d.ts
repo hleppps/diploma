@@ -5,3 +5,5 @@ export type GoogleMapRectangle = google.maps.Rectangle;
 export type GoogleMapCircle = google.maps.Circle;
 export type GoogleMapOverlayType = google.drawing.OverlayType;
 export type GoogleMapPolygonOptions = google.maps.PolygonOptions;
+
+export type GoogleMapBounds = google.maps.LatLngBoundsLiteral;

@@ -17,6 +17,8 @@ export const FlatsList: FC<FlatsListProps> = ({ flats }) => {
         flexDirection: 'column',
         gap: '16px',
         overflowY: 'scroll',
+        mt: '16px',
+        p: 0,
       }}
     >
       {flats.map((flat) => (

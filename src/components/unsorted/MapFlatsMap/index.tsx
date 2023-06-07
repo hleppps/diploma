@@ -126,7 +126,7 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
       <MarkerF position={{ lat: 50.4, lng: 30.54 }} />
       <MarkerF position={{ lat: 51.4, lng: 30.54 }} /> */}
 
-      {/* <MarkerF position={{ lat: 50.41, lng: 30.46 }} /> */}
+      {/* <MarkerF position={{ lat: 50.467268436022195, lng: 30.48500360667707 }} /> */}
       <MapMarkerClusterer>{flatMarkers}</MapMarkerClusterer>
       {/* {flatMarkers} */}
     </Map>

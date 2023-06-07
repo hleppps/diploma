@@ -17,20 +17,4 @@ export type Flat = {
   rentPrice: number;
 };
 
-export type GridSize = 'SM' | 'MD' | 'LG' | 'XL';
-
-export type FlatDbSliceItem<T> = Record<string, T[]>;
-
-export type PreparedFlatsData = FlatDbSliceItem[]
-//  | Flat[];
-
-export type GridCell = {
-  cellName: string; // LG_lat1_lng1
-  startPoint: Address;
-  step: GridStep;
-};
-
-export type PointGridCell = {
-  gridSize: GridSize;
-  gridName: string;
-};
+export type Tile = Address
