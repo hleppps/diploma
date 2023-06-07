@@ -23,7 +23,7 @@ const generateFlat = (options?: GenerateFlatsOptions): Flat => {
   const { maxLat, maxLng, minLat, minLng } = coordinates || {};
   return {
     id: faker.string.uuid(),
-    previewImage: faker.image.urlLoremFlickr({ category: 'interior' }),
+    previewImage: faker.image.urlLoremFlickr({ category: 'apartment' }),
     address: {
       coordinates: {
         lat: faker.location.latitude({ max: maxLat, min: minLat }),
