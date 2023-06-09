@@ -18,6 +18,7 @@ import { styles } from './styles';
 export const App: FC = () => {
   const [dbFlats, setDbFlats] = useState<Flat[]>([]);
   const [flats, setFlats] = useState<Flat[]>([]);
+  const [closeRangeFlats, setCloseRangeFlats] = useState<Flat[]>([]);
   const [figurePaths, setFigurePaths] = useState<Address[][]>([]);
   const [center, setCenter] = useState<Address>(dummyMapData.center);
   const [zoom, setZoom] = useState(dummyMapData.zoom);
@@ -76,6 +77,7 @@ export const App: FC = () => {
 
   const handleResetFlats = () => {
     setFlats([]);
+    setCloseRangeFlats([]);
     setFigurePaths([]);
   };
 
@@ -99,6 +101,7 @@ export const App: FC = () => {
 
   useEffect(() => {
     const foundFlats: Flat[] = [];
+    const closeRangeFoundFlats: Flat[] = [];
 
     figurePaths.forEach((path) => {
       const polygon = path.map((point) => [point.lat, point.lng]);
@@ -115,11 +118,18 @@ export const App: FC = () => {
           !foundFlats.find((flat) => flat.id === foundFlat.id)
         ) {
           foundFlats.push(foundFlat);
+        } else if (
+          !pointInPolygon &&
+          !foundFlats.find((flat) => flat.id === foundFlat.id) &&
+          !closeRangeFoundFlats.find((flat) => flat.id === foundFlat.id)
+        ) {
+          closeRangeFoundFlats.push(foundFlat);
         }
       });
     });
 
     setFlats(foundFlats);
+    setCloseRangeFlats(closeRangeFoundFlats);
   }, [figurePaths]);
 
   return (
@@ -130,6 +140,7 @@ export const App: FC = () => {
           resetPolygons={handleResetFigurePaths}
           mapRef={mapRef}
           flats={flats}
+          closeRangeFlats={closeRangeFlats}
           onPolygonComplete={handlePolygonComplete}
           onRectangleComplete={handleRectangleComplete}
           center={center}
@@ -157,8 +168,6 @@ export const App: FC = () => {
             Generate flats
           </Button>
         </ButtonGroup>
-
-        <Button onClick={handleResetFigurePaths}>Clear polygons</Button>
 
         <FlatsList flats={flats} />
       </Box>

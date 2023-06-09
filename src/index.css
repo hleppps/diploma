@@ -1,4 +1,4 @@
-.gmnoprint {
+.gmnoprint[role='menubar'] {
   margin: 10px !important;
 }
 .gmnoprint button {
