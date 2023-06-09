@@ -181,14 +181,14 @@ export const App: FC = () => {
             color="error"
             disabled={!dbFlats.length}
           >
-            Reset flats
+            Очистити базу даних
           </Button>
           <Button
             onClick={handleGenerateData}
             color="success"
             disabled={!!dbFlats.length}
           >
-            Generate flats
+            Згенерувати об&apos;єкти нерухомості
           </Button>
         </ButtonGroup>
         <Divider sx={{ mt: '16px' }} />

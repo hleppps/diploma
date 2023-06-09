@@ -141,7 +141,7 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
       drawButton,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [mapRef.current?.controls]);
 
   return (
     <Map
