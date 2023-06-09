@@ -8,3 +8,4 @@ export type GoogleMapPolygonOptions = google.maps.PolygonOptions;
 
 export type GoogleMapBounds = google.maps.LatLngBoundsLiteral;
 export type GoogleMapLibraries = google.maps.Libraries;
+export type GoogleMapLatLng = google.maps.LatLng;

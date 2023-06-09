@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup } from '@mui/material';
+import { Box, Button, ButtonGroup, Divider } from '@mui/material';
 import { FlatsList } from 'components/unsorted/FlatsList';
 import { MapFlatsMap } from 'components/unsorted/MapFlatsMap';
 import localforage from 'localforage';
@@ -20,6 +20,9 @@ export const App: FC = () => {
   const [flats, setFlats] = useState<Flat[]>([]);
   const [closeRangeFlats, setCloseRangeFlats] = useState<Flat[]>([]);
   const [figurePaths, setFigurePaths] = useState<Address[][]>([]);
+  const [freeHandFigurePaths, setFreeHandFigurePaths] = useState<Address[][]>(
+    [],
+  );
   const [center, setCenter] = useState<Address>(dummyMapData.center);
   const [zoom, setZoom] = useState(dummyMapData.zoom);
   const [mapKey, setMapKey] = useState(1);
@@ -50,15 +53,14 @@ export const App: FC = () => {
       ? dummyFlats
       : generateFlats(100, {
           coordinates: {
-            maxLat: 50.6,
-            minLat: 50.3,
-            maxLng: 30.9,
-            minLng: 30.3,
+            maxLat: 50.32,
+            minLat: 50.2,
+            maxLng: 28.77,
+            minLng: 28.57,
           },
           rooms: { min: 1, max: 4 },
           rentPrice: { min: 3000, max: 50000 },
         });
-    console.log(generatedFlats);
 
     localforage.setItem(Stores.Flats, generatedFlats).then((dbFlats) => {
       if (dbFlats) {
@@ -79,6 +81,14 @@ export const App: FC = () => {
     setFlats([]);
     setCloseRangeFlats([]);
     setFigurePaths([]);
+    setFreeHandFigurePaths([]);
+    setMapKey(Math.random() / 1000);
+  };
+
+  const handleAddFreeHandFigurePath = (path: Address[]) => {
+    if (path.length) {
+      setFreeHandFigurePaths((prevPaths) => [...prevPaths, path]);
+    }
   };
 
   const handleResetData = () => {
@@ -91,7 +101,6 @@ export const App: FC = () => {
   };
 
   const handleResetFigurePaths = () => {
-    setMapKey(Math.random() / 1000);
     handleResetFlats();
   };
 
@@ -100,8 +109,17 @@ export const App: FC = () => {
   }, []);
 
   useEffect(() => {
+    if (freeHandFigurePaths.length) {
+      setFigurePaths((prevPaths) => [
+        ...prevPaths,
+        freeHandFigurePaths[freeHandFigurePaths.length - 1],
+      ]);
+    }
+  }, [freeHandFigurePaths]);
+
+  useEffect(() => {
     const foundFlats: Flat[] = [];
-    const closeRangeFoundFlats: Flat[] = [];
+    let closeRangeFoundFlats: Flat[] = [];
 
     figurePaths.forEach((path) => {
       const polygon = path.map((point) => [point.lat, point.lng]);
@@ -113,17 +131,20 @@ export const App: FC = () => {
         const coordinates = foundFlat.address.coordinates;
         const point = [coordinates.lat, coordinates.lng];
         const pointInPolygon = pointInPolyRaycast(point, polygon);
-        if (
-          pointInPolygon &&
-          !foundFlats.find((flat) => flat.id === foundFlat.id)
-        ) {
+        const inFoundFlats = foundFlats.find(
+          (flat) => flat.id === foundFlat.id,
+        );
+        const inCloseRangeFlats = closeRangeFoundFlats.find(
+          (flat) => flat.id === foundFlat.id,
+        );
+        if (pointInPolygon && !inFoundFlats) {
           foundFlats.push(foundFlat);
-        } else if (
-          !pointInPolygon &&
-          !foundFlats.find((flat) => flat.id === foundFlat.id) &&
-          !closeRangeFoundFlats.find((flat) => flat.id === foundFlat.id)
-        ) {
+        } else if (!pointInPolygon && !inFoundFlats && !inCloseRangeFlats) {
           closeRangeFoundFlats.push(foundFlat);
+        } else if (inCloseRangeFlats && inFoundFlats) {
+          closeRangeFoundFlats = closeRangeFoundFlats.filter(
+            (flat) => flat.id !== foundFlat.id,
+          );
         }
       });
     });
@@ -145,6 +166,8 @@ export const App: FC = () => {
           onRectangleComplete={handleRectangleComplete}
           center={center}
           zoom={zoom}
+          handleAddFreeHandFigurePath={handleAddFreeHandFigurePath}
+          freeHandFigurePaths={freeHandFigurePaths}
           onUnmount={() => {
             setCenter(mapRef.current?.getCenter()?.toJSON() as Address);
             setZoom(mapRef.current?.getZoom() || dummyMapData.zoom);
@@ -168,8 +191,8 @@ export const App: FC = () => {
             Generate flats
           </Button>
         </ButtonGroup>
-
-        <FlatsList flats={flats} />
+        <Divider sx={{ mt: '16px' }} />
+        <FlatsList flats={flats} closeRangeFlats={closeRangeFlats} />
       </Box>
     </Box>
   );

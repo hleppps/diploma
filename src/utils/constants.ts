@@ -7,6 +7,8 @@ export enum Stores {
 export const TILE_ZOOM = 16;
 
 export const dummyMapData = {
-  center: { lat: 50.47, lng: 30.47 },
+  center: { lat: 50.28, lng: 28.67 },
   zoom: 12,
 };
+
+export const curveReduceEpsilon = 0.001;

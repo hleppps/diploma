@@ -5,6 +5,32 @@
   padding: 10px !important;
 }
 
+.draw-button {
+  top: 10.5px !important;
+  left: 279px !important;
+  height: 38px;
+  padding: 0 10px;
+
+  background: none rgb(255, 255, 255);
+  color: rgb(23, 138, 246);
+  font-weight: bold;
+  font-size: 20px;
+  border: 0px;
+  text-transform: none;
+  appearance: none;
+  position: absolute;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 2px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+}
+
+.draw-button:hover {
+  color: rgb(2, 79, 168);
+  background-color: rgb(194, 222, 255);
+}
+
 .clear-polygons-button {
   top: 10px !important;
   right: 70px !important;

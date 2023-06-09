@@ -1,17 +1,28 @@
-import { DrawingManagerF } from '@react-google-maps/api';
+import { DrawingManagerF, PolygonF, PolylineF } from '@react-google-maps/api';
 import { Map, MapProps } from 'components/unsorted/Map';
-import { FC, useEffect, useMemo } from 'react';
-import { Flat } from 'types/global';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { Address, Flat } from 'types/global';
 import {
   GoogleMapCircle,
+  GoogleMapLatLng,
   GoogleMapOverlayType,
   GoogleMapPolygon,
   GoogleMapRectangle,
 } from 'types/map';
 import { createMapControlButton } from 'utils/createMapControlButton';
+import { polylinePathToFigurePath } from 'utils/polylinePathToFigurePath';
 
 import { MapHouseMarker } from '../MapHouseMarker';
 import { MapMarkerClusterer } from '../MapMarkerClusterer';
+
+const figureOptions = {
+  fillOpacity: 0.2,
+  fillColor: '#5F96F5',
+  strokeColor: '#5F96F5',
+  strokeWeight: 3,
+  draggable: false,
+  editable: false,
+};
 
 export type MapFlatsMapProps = {
   onCircleComplete?: (circle: GoogleMapCircle) => void;
@@ -20,6 +31,8 @@ export type MapFlatsMapProps = {
   flats: Flat[];
   closeRangeFlats: Flat[];
   resetPolygons: () => void;
+  handleAddFreeHandFigurePath: (path: Address[]) => void;
+  freeHandFigurePaths: Address[][];
 } & MapProps;
 
 export const MapFlatsMap: FC<MapFlatsMapProps> = ({
@@ -30,15 +43,57 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
   closeRangeFlats,
   mapRef,
   resetPolygons,
+  handleAddFreeHandFigurePath,
+  freeHandFigurePaths,
   ...rest
 }) => {
-  const figureOptions = {
-    fillOpacity: 0.2,
-    fillColor: '#5F96F5',
-    strokeColor: '#5F96F5',
-    strokeWeight: 3,
-    draggable: false,
-    editable: false,
+  const [drawing, setDrawing] = useState(false);
+  const [mouseDown, setMouseDown] = useState(false);
+  const [polylinePath, setPolylinePath] = useState<GoogleMapLatLng[]>([]);
+
+  const disableMap = () => {
+    mapRef.current?.setOptions({
+      draggable: false,
+      zoomControl: false,
+      scrollwheel: false,
+      disableDoubleClickZoom: false,
+    });
+  };
+
+  const enableMap = () => {
+    mapRef.current?.setOptions({
+      draggable: true,
+      zoomControl: true,
+      scrollwheel: true,
+      disableDoubleClickZoom: true,
+    });
+  };
+
+  const handleSetDrawing = () => {
+    disableMap();
+    setDrawing(true);
+  };
+
+  const handleMouseMove = (e: google.maps.MapMouseEvent) => {
+    if (drawing && mouseDown) {
+      const { latLng } = e || {};
+      if (latLng) {
+        setPolylinePath((prev) => [...prev, latLng]);
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setMouseDown(false);
+    setDrawing(false);
+    enableMap();
+    const freeHandFigurePath = polylinePathToFigurePath(polylinePath);
+    setPolylinePath([]);
+    handleAddFreeHandFigurePath(freeHandFigurePath);
+  };
+
+  const handleMouseDown = () => {
+    setMouseDown(true);
   };
 
   const flatMarkers = useMemo(() => {
@@ -72,15 +127,35 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
     className: 'clear-polygons-button',
   });
 
+  const drawButton = createMapControlButton({
+    textContent: '✎',
+    onClick: handleSetDrawing,
+    className: 'draw-button',
+  });
+
   useEffect(() => {
     mapRef.current?.controls[google.maps.ControlPosition.RIGHT_TOP].push(
       updateButton,
     );
+    mapRef.current?.controls[google.maps.ControlPosition.LEFT_TOP].push(
+      drawButton,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapRef.current?.controls]);
+  }, []);
 
   return (
-    <Map mapRef={mapRef} {...rest}>
+    <Map
+      {...rest}
+      mapRef={mapRef}
+      onMouseMove={handleMouseMove}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+    >
+      <PolylineF onMouseUp={handleMouseUp} path={polylinePath} />
+      {freeHandFigurePaths.map((path, index) => (
+        <PolygonF options={figureOptions} key={index} path={path} />
+      ))}
+
       <DrawingManagerF
         options={{
           polygonOptions: figureOptions,

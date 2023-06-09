@@ -37,7 +37,6 @@ const findTilesBetweenExtreme = ({
 export const findPathTiles = (path: Address[]) => {
   const { leftBottom, leftTop, rightBottom } = findPathExtremePoints(path);
 
-  // console.log({ leftBottom, leftTop, rightBottom, rightTop });
   const leftBottomTile = coordinatesToTile(leftBottom);
   const leftTopTile = coordinatesToTile(leftTop);
   const rightBottomTile = coordinatesToTile(rightBottom);
