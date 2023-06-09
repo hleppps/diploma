@@ -17,16 +17,27 @@ export class Tiles {
     });
   };
 
-  get = (key?: string) => (key ? this.tiles.get(key) : this.tiles);
+  getByKey = (key: string) => this.tiles.get(key);
 
-  getTileValues = (tile: Tile) => {
-    const tileKey = tileToTileKey(tile);
-    return this.tiles.get(tileKey)?.values();
+  getFlats = (tilesToSearch: Tile[]) => {
+    const flats: Flat[] = [];
+    tilesToSearch.forEach((tile) => {
+      const tileKey = tileToTileKey(tile);
+      const tileFlats = this.getByKey(tileKey);
+      if (tileFlats) {
+        flats.push(...tileFlats);
+      }
+    });
+    return flats;
   };
 
   set = (tile: Tile, flat: Flat) => {
     const tileKey = tileToTileKey(tile);
     const tileItem = this.tiles.get(tileKey);
     this.tiles.set(tileKey, tileItem ? [...tileItem, flat] : [flat]);
+  };
+
+  reset = () => {
+    this.tiles = new Map<string, Flat[]>();
   };
 }

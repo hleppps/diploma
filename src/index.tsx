@@ -1,3 +1,5 @@
+import './index.css';
+
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { App } from 'components/app/App';
 import { StrictMode } from 'react';

@@ -7,3 +7,4 @@ export type GoogleMapOverlayType = google.drawing.OverlayType;
 export type GoogleMapPolygonOptions = google.maps.PolygonOptions;
 
 export type GoogleMapBounds = google.maps.LatLngBoundsLiteral;
+export type GoogleMapLibraries = google.maps.Libraries;

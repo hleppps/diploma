@@ -33,4 +33,5 @@ export const coordinatesToTile = (
   return { lng: latTile, lat: lngTile };
 };
 
-export const tileToTileKey = (tile: Tile) => JSON.stringify(tile);
+export const tileToTileKey = (tile: Tile) =>
+  JSON.stringify({ lat: tile.lat, lng: tile.lng });

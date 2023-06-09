@@ -1,6 +1,6 @@
-import { DrawingManagerF, MarkerF, PolylineF } from '@react-google-maps/api';
+import { DrawingManagerF } from '@react-google-maps/api';
 import { Map, MapProps } from 'components/unsorted/Map';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Flat } from 'types/global';
 import {
   GoogleMapCircle,
@@ -8,6 +8,7 @@ import {
   GoogleMapPolygon,
   GoogleMapRectangle,
 } from 'types/map';
+import { createMapControlButton } from 'utils/createMapControlButton';
 
 import { MapHouseMarker } from '../MapHouseMarker';
 import { MapMarkerClusterer } from '../MapMarkerClusterer';
@@ -17,6 +18,7 @@ export type MapFlatsMapProps = {
   onRectangleComplete?: (rectangle: GoogleMapRectangle) => void;
   onPolygonComplete?: (polygon: GoogleMapPolygon) => void;
   flats: Flat[];
+  resetPolygons: () => void;
 } & MapProps;
 
 export const MapFlatsMap: FC<MapFlatsMapProps> = ({
@@ -24,6 +26,8 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
   onRectangleComplete,
   onPolygonComplete,
   flats,
+  mapRef,
+  resetPolygons,
   ...rest
 }) => {
   const figureOptions = {
@@ -47,8 +51,21 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
     ));
   }, [flats]);
 
+  const updateButton = createMapControlButton({
+    textContent: '⌫ Очистити',
+    onClick: resetPolygons,
+    className: 'clear-polygons-button',
+  });
+
+  useEffect(() => {
+    mapRef.current?.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+      updateButton,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapRef.current?.controls]);
+
   return (
-    <Map zoom={12} center={{ lat: 50.47, lng: 30.47 }} {...rest}>
+    <Map mapRef={mapRef} {...rest}>
       <DrawingManagerF
         options={{
           polygonOptions: figureOptions,
@@ -66,6 +83,16 @@ export const MapFlatsMap: FC<MapFlatsMapProps> = ({
         onRectangleComplete={onRectangleComplete}
         onPolygonComplete={onPolygonComplete}
       />
+
+      {/* {polygons.map((iterator, index) => (
+          <PolygonF
+            key={index}
+            options={figureOptions}
+            paths={iterator}
+            draggable
+            editable
+          />
+        ))} */}
 
       {/* <PolylineF
         options={{ strokeColor: 'red' }}

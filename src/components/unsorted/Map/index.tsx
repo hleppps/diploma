@@ -4,31 +4,26 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import { FC, memo, MutableRefObject } from 'react';
-import { Address } from 'types/global';
-import { GoogleMapType } from 'types/map';
-import { GOOGLE_MAP_API_KEY } from 'utils/constants';
+import { GoogleMapLibraries, GoogleMapType } from 'types/map';
+import { dummyMapData, GOOGLE_MAP_API_KEY } from 'utils/constants';
 
 const containerStyle = {
   width: '100%',
   height: '100%',
 };
+const libraries: GoogleMapLibraries = ['places', 'drawing'];
 
-export const dummyMapData = {
-  center: { lat: 50.47, lng: 30.47 },
-  zoom: 9,
-};
-const { center: dummyCenter, zoom: dummyZoom } = dummyMapData;
+const { zoom: dummyZoom } = dummyMapData;
 
 export type MapProps = {
-  center?: Address | null;
   getMapReference?: (map: GoogleMapType | undefined) => void;
   mapRef: MutableRefObject<google.maps.Map | undefined>;
-} & Omit<GoogleMapProps, 'center'>;
+} & GoogleMapProps;
 
-const Map: FC<MapProps> = ({ children, zoom, center, mapRef, ...rest }) => {
+const Map: FC<MapProps> = ({ children, zoom, mapRef, ...rest }) => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAP_API_KEY,
-    libraries: ['places', 'drawing'],
+    libraries,
   });
 
   const onLoadMap = (map: GoogleMapType) => {
@@ -42,7 +37,6 @@ const Map: FC<MapProps> = ({ children, zoom, center, mapRef, ...rest }) => {
   return (
     <GoogleMap
       zoom={zoom || dummyZoom}
-      center={center || dummyCenter}
       onLoad={onLoadMap}
       mapContainerStyle={containerStyle}
       {...rest}
