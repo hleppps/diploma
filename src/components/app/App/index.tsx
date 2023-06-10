@@ -51,16 +51,28 @@ export const App: FC = () => {
 
     const generatedFlats = useDummyData
       ? dummyFlats
-      : generateFlats(100, {
-          coordinates: {
-            maxLat: 50.32,
-            minLat: 50.2,
-            maxLng: 28.77,
-            minLng: 28.57,
-          },
-          rooms: { min: 1, max: 4 },
-          rentPrice: { min: 3000, max: 50000 },
-        });
+      : [
+          ...generateFlats(100, {
+            coordinates: {
+              maxLat: 50.32,
+              minLat: 50.2,
+              maxLng: 28.77,
+              minLng: 28.57,
+            },
+            rooms: { min: 1, max: 4 },
+            rentPrice: { min: 3000, max: 50000 },
+          }),
+          ...generateFlats(1000, {
+            coordinates: {
+              maxLat: 50,
+              minLat: 40,
+              maxLng: 30,
+              minLng: 20,
+            },
+            rooms: { min: 1, max: 4 },
+            rentPrice: { min: 3000, max: 50000 },
+          }),
+        ];
 
     localforage.setItem(Stores.Flats, generatedFlats).then((dbFlats) => {
       if (dbFlats) {
